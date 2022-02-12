@@ -1,4 +1,9 @@
+import os.path
+import json
+
 User = {}
+filename = "userDB.json"
+
 def add_user():
     output = {}
     print("please describe your details")
@@ -12,11 +17,13 @@ def add_user():
     output["Gender"] = d
     return output
 
+
 def get_user_by_id(user_id):
     curr_user = {}
     if user_id in User:
         curr_user = User[user_id]
     return curr_user
+
 
 def remove_user_by_id(user_id):
     if user_id in User:
@@ -26,6 +33,7 @@ def remove_user_by_id(user_id):
         print("User not found")
     return
 
+
 def modify_user(user_id):
     if user_id in User:
         User[user_id] = add_user()
@@ -34,22 +42,40 @@ def modify_user(user_id):
         print("User not found")
 
 
+def menu():
+    print("\n\nMenu")
+    print("1.Add user")
+    print("2.Display user by id")
+    print("3.Display all users")
+    print("4.Remove user")
+    print("5.Modify user")
+    print("6.Exit\n")
+    return int(input("Enter choice:"))
+
+def getExistingRecords():
+    data = {}
+    if os.path.isfile(filename):
+        with open(filename, 'r') as f:
+                data = json.loads(f.read())
+        f.close()
+    else:
+        print(f"No existing data present. File not found {filename}")
+    return data
 
 
+def storeExistingData(data):
+    with open(filename, "w+") as f:
+        json.dump(data, f, indent=4)
+    f.close()
+    print("Saved info to file successfully.")
 
-if __name__ =="__main__":
-    User_count = 1
+
+if __name__ == "__main__":
+    User = getExistingRecords()
+    User_count = len(User) +1
     choice = True
     while choice:
-        print("\n\nMenu")
-        print("1.Add user")
-        print("2.Display user by id")
-        print("3.Display all users")
-        print("4.Remove user")
-        print("5.Modify user")
-        print("6.Exit\n")
-
-        c = int(input("Enter choice:"))
+        c = menu()
         if c == 1:
             g = add_user()
             print(g)
@@ -57,8 +83,8 @@ if __name__ =="__main__":
             User_count += 1
 
         if c == 2:
-            h  = int(input("Enter user id:"))
-            u = get_user_by_id(h)
+            h = int(input("Enter user id:"))
+            u = get_user_by_id(str(h))
 
             if u == {}:
                 print(f"User with this id {h} not found.")
@@ -80,15 +106,6 @@ if __name__ =="__main__":
             modify_user(m)
 
         if c == 6:
-           choice = False
-           print("Program exited succsessfully.")
-
-
-
-
-
-
-
-
-
-
+            storeExistingData(User)
+            choice = False
+            print("Program exited succsessfully.")
